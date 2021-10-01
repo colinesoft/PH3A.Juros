@@ -1,0 +1,91 @@
+﻿<h1> Manutenção de Parcelas</h1>
+<p>Lista das Parcelas</p>
+
+
+<div>
+    <a class="btn btn-sm btn-outline-info" href="~/Parcelas/Save">Nova Parcela</a>
+</div>
+
+<div id="grid"></div>
+
+<div class="options">
+    <form method="post">
+        <div class="row">
+            <div class="col-2">
+                <label>
+                    <span>% Juros</span>
+                    <input type="number" name="percentuaJuros" id="percentuaJuros" required />
+                </label>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2">
+                <label>
+                    <input type="radio" value="Linear" name="tipo" checked />
+                    <span>Linear</span>
+                </label><br>
+                <label>
+                    <input type="radio" value="Capitalizado" name="tipo" />
+                    <span>Capitalizado</span>
+                </label>
+            </div>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-sm btn-primary">Simular Cálculo</button>
+        </div>
+    </form>
+</div>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+        CarregaGrid(false);
+        //Cancela o evento padrão do submit
+        document.querySelector("form").addEventListener('submit', (event) => {            
+            event.preventDefault()
+            if (Valida()) {
+                CarregaGrid(true);
+            }
+        });
+    });
+
+    function Delete(parcela) {
+        var conf = confirm(`Confirma a exclusão da parcela #${parcela}?`);
+        if (conf) {
+            let xhr = new XMLHttpRequest()
+            const url = `/Parcelas/Delete/${parcela}`
+            xhr.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    if (this.status === 404 || this.status === 200) {
+                        CarregaGrid(false);
+                    } else {
+                        alert("Ocorreu um erro não tratado");
+                    }
+                }
+            }
+            xhr.open('get', url);
+            xhr.send();
+        }
+    }
+
+    function CarregaGrid(gravar) {
+        let xhr = new XMLHttpRequest();
+        let juros = document.getElementById("percentuaJuros").value;
+        let tipo = document.querySelector('input[name="tipo"]:checked').value;
+        let params = `juros=${juros}&tipo=${tipo}&gravar=${gravar}`;
+        const url = `/Parcelas/Table`;
+        xhr.onreadystatechange = function () {
+            if (this.readyState === 4) {
+                document.getElementById('grid').innerHTML = this.responseText;
+            }
+        }
+        xhr.open('post', url);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.send(params);
+    }
+
+    function Valida() {
+        let juros = document.getElementById("percentuaJuros").value
+        return juros > 0;
+    }
+</script>
