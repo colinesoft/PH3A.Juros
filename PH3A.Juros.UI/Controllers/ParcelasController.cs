@@ -14,7 +14,7 @@ namespace PH3A.Juros.UI.Controllers
         private readonly SimulacaoRepository _simulacaoRepository = new SimulacaoRepository();
         private readonly PH3AContext _context = new PH3AContext();
 
-        public ActionResult Index(decimal? juros, string tipo)
+        public ActionResult Index()
         {
             return View();
         }

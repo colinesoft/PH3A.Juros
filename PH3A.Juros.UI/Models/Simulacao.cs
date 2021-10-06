@@ -10,6 +10,6 @@ namespace PH3A.Juros.UI.Models
         public double PercentualJuros { get; set; }
         public string TipoJuros { get; set; }
 
-        public List<SimulacaoParcela> SimulacaoParcelas { get; set; }
+        public virtual List<SimulacaoParcela> SimulacaoParcelas { get; set; }
     }
 }
