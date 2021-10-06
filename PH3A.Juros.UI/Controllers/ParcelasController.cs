@@ -11,8 +11,14 @@ namespace PH3A.Juros.UI.Controllers
 {
     public class ParcelasController: Controller
     {
-        private readonly IParcelaRepository _parcelaRepository = new ParcelaRepository();
-        private readonly ISimulacaoRepository _simulacaoRepository = new SimulacaoRepository();
+        private readonly IParcelaRepository _parcelaRepository;
+        private readonly ISimulacaoRepository _simulacaoRepository;
+
+        public ParcelasController(IParcelaRepository parcelaRepository, ISimulacaoRepository simulacaoRepository):base()
+        {
+            _parcelaRepository = parcelaRepository;
+            _simulacaoRepository = simulacaoRepository;
+        }
 
         public ActionResult Index()
         {
