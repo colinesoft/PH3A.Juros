@@ -81,7 +81,10 @@ namespace PH3A.Juros.UI.Controllers
         [HttpPost]
         public ActionResult Save(Parcela parcela)
         {
-            _parcelaRepository.Alterar(parcela);
+            if (parcela.Id == 0)
+                _parcelaRepository.Incluir(parcela);
+            else
+                _parcelaRepository.Alterar(parcela);
             return RedirectToAction("Index");
         }
 
