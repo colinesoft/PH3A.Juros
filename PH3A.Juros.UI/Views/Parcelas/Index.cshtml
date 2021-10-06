@@ -39,12 +39,12 @@
 <script>
 
     document.addEventListener("DOMContentLoaded", function (event) {
-        CarregaGrid(false);
+        CarregaGrid();
         //Cancela o evento padrão do submit
         document.querySelector("form").addEventListener('submit', (event) => {            
             event.preventDefault()
             if (Valida()) {
-                CarregaGrid(true);
+                CarregaGrid();
             }
         });
     });
@@ -57,7 +57,7 @@
             xhr.onreadystatechange = function () {
                 if (this.readyState === 4) {
                     if (this.status === 404 || this.status === 200) {
-                        CarregaGrid(false);
+                        CarregaGrid();
                     } else {
                         alert("Ocorreu um erro não tratado");
                     }
@@ -68,11 +68,11 @@
         }
     }
 
-    function CarregaGrid(gravar) {
+    function CarregaGrid() {
         let xhr = new XMLHttpRequest();
         let juros = document.getElementById("percentuaJuros").value;
         let tipo = document.querySelector('input[name="tipo"]:checked').value;
-        let params = `juros=${juros}&tipo=${tipo}&gravar=${gravar}`;
+        let params = `juros=${juros}&tipo=${tipo}`;
         const url = `/Parcelas/Table`;
         xhr.onreadystatechange = function () {
             if (this.readyState === 4) {
