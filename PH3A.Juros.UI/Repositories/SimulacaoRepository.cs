@@ -13,5 +13,10 @@ namespace PH3A.Juros.UI.Repositories
         {
             Incluir(obj);
         }
+
+        public int NovoId()
+        {
+            return _table.Max(c => c.Id) + 1;
+        }
     }
 }

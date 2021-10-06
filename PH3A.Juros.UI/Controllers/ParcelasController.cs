@@ -1,6 +1,7 @@
 ﻿using PH3A.Juros.UI.Data;
 using PH3A.Juros.UI.Models;
 using PH3A.Juros.UI.Repositories;
+using PH3A.Juros.UI.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +11,8 @@ namespace PH3A.Juros.UI.Controllers
 {
     public class ParcelasController: Controller
     {
-        private readonly ParcelaRepository _parcelaRepository = new ParcelaRepository();
-        private readonly SimulacaoRepository _simulacaoRepository = new SimulacaoRepository();
-        private readonly PH3AContext _context = new PH3AContext();
+        private readonly IParcelaRepository _parcelaRepository = new ParcelaRepository();
+        private readonly ISimulacaoRepository _simulacaoRepository = new SimulacaoRepository();
 
         public ActionResult Index()
         {
@@ -32,7 +32,7 @@ namespace PH3A.Juros.UI.Controllers
 
             if (juros!=0)
             {
-                int newId = _context.Simulacoes.Max(c => c.Id)+1;
+                int newId = _simulacaoRepository.NovoId();
                 Simulacao simulacao = new Simulacao()
                 {
                     DataSimulacao = DateTime.Now,
@@ -85,12 +85,6 @@ namespace PH3A.Juros.UI.Controllers
             if(parcela != null)
                 _parcelaRepository.Excluir(parcela);
             return null;
-        }
-
-
-        protected override void Dispose(bool disposing)
-        {
-            _context.Dispose(); 
         }
     }
 }

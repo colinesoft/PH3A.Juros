@@ -10,5 +10,6 @@ namespace PH3A.Juros.UI.Repositories.Interfaces
     public interface ISimulacaoRepository: IRepository<Simulacao>
     {
         void GravarSimulacao(Simulacao obj);
+        int NovoId();
     }
 }
