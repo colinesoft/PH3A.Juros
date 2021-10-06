@@ -1,5 +1,7 @@
-﻿using System.Net.Http.Headers;
+﻿using System;
+using System.Net.Http.Headers;
 using System.Web.Http;
+using System.Web.Mvc;
 
 namespace PH3A.Juros.WS
 {
@@ -19,7 +21,8 @@ namespace PH3A.Juros.WS
             );
 
             config.Formatters.JsonFormatter.SupportedMediaTypes
-                .Add(new MediaTypeHeaderValue("text/html"));
+                .Add(new MediaTypeHeaderValue("text/html")); //Retorna como TEXT
+            //.Add(new MediaTypeHeaderValue("text/plain")); //Retornou como XML
         }
     }
 }

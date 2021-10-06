@@ -132,11 +132,19 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\Interfaces\ISimulacaoParcelasRepository.cs" />
+    <Compile Include="Repositories\Interfaces\ISimulacaoRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IParcelaRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IRepository.cs" />
     <Compile Include="Models\SimulacaoParcela.cs" />
     <Compile Include="Models\Simulacao.cs" />
     <Compile Include="Models\RetornoWS.cs" />
     <Compile Include="Models\Parcela.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\SimulacaoParcelasRepository.cs" />
+    <Compile Include="Repositories\SimulacaoRepository.cs" />
+    <Compile Include="Repositories\ParcelaRepository.cs" />
+    <Compile Include="Repositories\Repository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\web.config" />

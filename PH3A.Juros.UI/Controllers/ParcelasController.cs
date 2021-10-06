@@ -1,5 +1,6 @@
 ﻿using PH3A.Juros.UI.Data;
 using PH3A.Juros.UI.Models;
+using PH3A.Juros.UI.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,22 +10,27 @@ namespace PH3A.Juros.UI.Controllers
 {
     public class ParcelasController: Controller
     {
+        private readonly ParcelaRepository _parcelaRepository = new ParcelaRepository();
+        private readonly SimulacaoRepository _simulacaoRepository = new SimulacaoRepository();
         private readonly PH3AContext _context = new PH3AContext();
 
         public ActionResult Index(decimal? juros, string tipo)
         {
-            var parcelas = CalculaParcelas(juros, tipo);
-            return View(parcelas);
+            return View();
         }
 
         [HttpPost]
-        public ActionResult Table(decimal? juros, string tipo, bool gravar)
+        public ActionResult Table(decimal? juros, string tipo)
         {
-            var parcelas = CalculaParcelas(juros, tipo);
+            juros = juros == null ? 0 : juros;
+            //Obtem uma lista das parcelas calculadas de acordo com o tipo
+            List<Parcela> parcelas = _parcelaRepository.BuscarPorTipo(tipo, (double)juros).ToList();
+
             ViewBag.TotalJuros = parcelas.Sum(c => c.Juros);
             ViewBag.TotalDivida = parcelas.Sum(c => c.TotalDivida);
 
-            if (gravar)
+
+            if (juros!=0)
             {
                 int newId = _context.Simulacoes.Max(c => c.Id)+1;
                 Simulacao simulacao = new Simulacao()
@@ -32,10 +38,9 @@ namespace PH3A.Juros.UI.Controllers
                     DataSimulacao = DateTime.Now,
                     PercentualJuros = (double)juros,
                     TipoJuros = tipo,
-                    Id = newId
+                    Id = newId,
+                    SimulacaoParcelas = new List<SimulacaoParcela>()
                 };
-                _context.Simulacoes.Add(simulacao);
-
                 foreach (var item in parcelas)
                 {
                     SimulacaoParcela simulacaoParcela = new SimulacaoParcela()
@@ -47,9 +52,10 @@ namespace PH3A.Juros.UI.Controllers
                         TotalJuros = item.Juros,
                         Valor = item.Valor
                     };
-                    _context.SimulacoesParcelas.Add(simulacaoParcela);
+                    simulacao.SimulacaoParcelas.Add(simulacaoParcela);
                 }
-                _context.SaveChanges();
+                //Grava toda a simulação
+                _simulacaoRepository.GravarSimulacao(simulacao);
             }
 
             return PartialView("_Table", parcelas);
@@ -61,7 +67,7 @@ namespace PH3A.Juros.UI.Controllers
             Parcela parcela = new Parcela();
             if(id != null)
             {
-                parcela = _context.Parcelas.Find(id);
+                parcela = _parcelaRepository.Buscar((int)id);
             }
             return View(parcela);
         }
@@ -69,43 +75,18 @@ namespace PH3A.Juros.UI.Controllers
         [HttpPost]
         public ActionResult Save(Parcela parcela)
         {
-            if(parcela.Id == 0) //Insert
-            {
-                _context.Parcelas.Add(parcela);                
-            } else //Update
-            {
-                _context.Entry(parcela).State = System.Data.Entity.EntityState.Modified;
-            }
-            _context.SaveChanges();
-
+            _parcelaRepository.Alterar(parcela);
             return RedirectToAction("Index");
         }
 
         public ActionResult Delete(int id)
         {
-            var parcela = _context.Parcelas.Find(id);
-
-            if(parcela == null)
-            {
-                return HttpNotFound();
-            }
-            _context.Parcelas.Remove(parcela);
-            _context.SaveChanges();
+            Parcela parcela = _parcelaRepository.Buscar(id);
+            if(parcela != null)
+                _parcelaRepository.Excluir(parcela);
             return null;
         }
 
-        private List<Parcela> CalculaParcelas(decimal? juros, string tipo)
-        {
-            if (juros == null) juros = 0;
-            if (tipo == null) tipo = "Linear";
-            var parcelas = _context.Parcelas
-                .OrderBy(c => c.DataVencto)
-                .ToList();
-
-            foreach (var item in parcelas)
-                item.CalculaJuros(juros, tipo);
-            return parcelas;
-        }
 
         protected override void Dispose(bool disposing)
         {

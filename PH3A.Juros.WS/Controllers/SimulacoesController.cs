@@ -11,6 +11,7 @@ namespace PH3A.Juros.WS.Controllers
     {
         private readonly PH3AContext _context = new PH3AContext();
         
+        [HttpGet]
         public List<Simulacao> Get()
         {
             var simulacoes = _context.Simulacoes.AsNoTracking()
